@@ -5,12 +5,16 @@ export class AttestationQueryBuilder {
   private prisma: PrismaClient;
   private schema: Schema;
 
-  constructor(schema: Schema, prismaClient: PrismaClient) {
+  constructor(schema: Schema, prismaClient: PrismaClient, includeRevoked?: boolean) {
     this.prisma = prismaClient;
     this.schema = schema;
+
+    if (!includeRevoked) {
+      this.condition.revoked = false;
+    }
   }
 
-  static async create(schemaUid: string, prismaClient: PrismaClient) {
+  static async create(schemaUid: string, prismaClient: PrismaClient, includeRevoked?: boolean) {
     const schema = await prismaClient.schema.findUnique({
       where: { id: schemaUid },
     });
@@ -19,7 +23,7 @@ export class AttestationQueryBuilder {
       throw new Error(`Schema with UID ${schemaUid} not found.`);
     }
 
-    return new AttestationQueryBuilder(schema, prismaClient);
+    return new AttestationQueryBuilder(schema, prismaClient, includeRevoked);
   }
 
   ///
