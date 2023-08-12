@@ -1,1 +1,6 @@
-node_modules
+# don't track node modules
+node_modules/
+
+# directory with the compiled TypeScript of the project
+dist/
+
