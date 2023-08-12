@@ -1,5 +1,5 @@
 import { Attestation, PrismaClient, Schema } from '@prisma/client';
-import { ethers } from 'ethers';
+import { ethers, AbiCoder } from 'ethers';
 
 export class AttestationQueryBuilder {
   private condition: any = {};
@@ -44,7 +44,7 @@ export class AttestationQueryBuilder {
     // - key is the field name
     // - value is the decoded value of the field
 
-    const decodedValues = ethers.utils.defaultAbiCoder.decode(this.schemaAbiTypes, data);
+    const decodedValues = AbiCoder.defaultAbiCoder().decode(this.schemaAbiTypes, data);
 
     let decodedData = {};
     for (let i = 0; i < decodedValues.length; i++) {
@@ -77,7 +77,7 @@ export class AttestationQueryBuilder {
   // after the data is fetched from the DB.
   //
 
-  dataKeyWithValue(key: string, value: string | number): this {
+  dataKeyWithValue(key: string, value: string | number | bigint): this {
     const condition = (decodedData: any) => {
       if (!decodedData.hasOwnProperty(key)) {
         throw new Error(`Field "${key}" does not exist in data.`);
@@ -89,12 +89,13 @@ export class AttestationQueryBuilder {
     return this;
   }
 
-  dataValueLessThan(key: string, value: number): this {
+  dataValueLessThan(key: string, value: number | bigint): this {
     const condition = (decodedData: any) => {
       if (!decodedData.hasOwnProperty(key)) {
         throw new Error(`Field "${key}" does not exist in data.`);
       }
-      if (typeof decodedData[key] !== 'number') {
+      const valueType = typeof decodedData[key];
+      if (valueType !== 'number' && valueType !== 'bigint') {
         throw new Error(`Value of "${key}" is not a number.`);
       }
       return decodedData[key] < value;
@@ -104,12 +105,13 @@ export class AttestationQueryBuilder {
     return this;
   }
 
-  dataValueGreaterThan(key: string, value: number): this {
+  dataValueGreaterThan(key: string, value: number | bigint): this {
     const condition = (decodedData: any) => {
       if (!decodedData.hasOwnProperty(key)) {
         throw new Error(`Field "${key}" does not exist in data.`);
       }
-      if (typeof decodedData[key] !== 'number') {
+      const valueType = typeof decodedData[key];
+      if (valueType !== 'number' && valueType !== 'bigint') {
         throw new Error(`Value of "${key}" is not a number.`);
       }
       return decodedData[key] > value;

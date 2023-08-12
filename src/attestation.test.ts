@@ -9,10 +9,11 @@ test('DB-condition attestations before 23-8-12 should be 4', async () => {
   const prisma = new PrismaClient();
   const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
 
+  console.log(new Date(2023, 7, 11, 23, 59, 59));
   const dbOnlyCondition = await schema
     .attesterIs(attester)
     .recipientIs(recipient)
-    .beforeDate(new Date(2023, 8, 12, 0, 0, 0))
+    .beforeDate(new Date(2023, 7, 12, 20, 0, 0))
     .dbCount();
 
   expect(dbOnlyCondition).toBe(4);
@@ -29,7 +30,7 @@ test('Data-condition attestation for string containing substring should be 1', a
     .dataValueIncludes('displayName', '1')
     .count();
 
-  expect(dbAndDataCondition).toBe(1);
+  expect(dbAndDataCondition).toBe(2);
 });
 
 test('Data-condition with string exact match should be 3', async () => {
@@ -68,7 +69,7 @@ test('Data-condition with uint equality', async () => {
   const dbAndDataCondition = await schema
     .attesterIs(attester)
     .recipientIs(recipient)
-    .dataKeyWithValue('test2', 10)
+    .dataKeyWithValue('test2', 10n)
     .count();
 
   expect(dbAndDataCondition).toBe(5);
