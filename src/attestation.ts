@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 
 export class AttestationQueryBuilder {
   private condition: any = {};
+  private dataConditions: Array<Function> = [];
   private prisma: PrismaClient;
   private schema: Schema;
   private schemaAbiTypes: string[];
@@ -56,6 +57,7 @@ export class AttestationQueryBuilder {
   // Schema-related functions to return relevant data. These Schema data
   // doesn't change so returning data from the in-memory `this.schema`
   // object is fine.
+  //
 
   schemaCreator() {
     return this.schema.creator;
@@ -65,12 +67,101 @@ export class AttestationQueryBuilder {
     return this.schema.id;
   }
 
-  getSchemaAbiTypes() {
-    return this.schemaAbiTypes;
+  getSchemaAbi() {
+    return this.schema.schema;
   }
 
   ////
-  // Condition-building functions
+  // Data condition-building functions for application level filtering
+  // after the data is fetched from the DB.
+  //
+
+  dataKeyWithValue(key: string, value: string | number): this {
+    const condition = (decodedData: any) => {
+      if (!decodedData.hasOwnProperty(key)) {
+        throw new Error(`Field "${key}" does not exist in data.`);
+      }
+      return decodedData[key] === value;
+    };
+
+    this.dataConditions.push(condition);
+    return this;
+  }
+
+  dataValueLessThan(key: string, value: number): this {
+    const condition = (decodedData: any) => {
+      if (!decodedData.hasOwnProperty(key)) {
+        throw new Error(`Field "${key}" does not exist in data.`);
+      }
+      if (typeof decodedData[key] !== 'number') {
+        throw new Error(`Value of "${key}" is not a number.`);
+      }
+      return decodedData[key] < value;
+    };
+
+    this.dataConditions.push(condition);
+    return this;
+  }
+
+  dataValueGreaterThan(key: string, value: number): this {
+    const condition = (decodedData: any) => {
+      if (!decodedData.hasOwnProperty(key)) {
+        throw new Error(`Field "${key}" does not exist in data.`);
+      }
+      if (typeof decodedData[key] !== 'number') {
+        throw new Error(`Value of "${key}" is not a number.`);
+      }
+      return decodedData[key] > value;
+    };
+
+    this.dataConditions.push(condition);
+    return this;
+  }
+
+  dataValueIncludes(key: string, substring: string): this {
+    const condition = (decodedData: any) => {
+      if (!decodedData.hasOwnProperty(key)) {
+        throw new Error(`Field "${key}" does not exist in data.`);
+      }
+      if (typeof decodedData[key] !== 'string') {
+        throw new Error(`Value of "${key}" is not a string.`);
+      }
+      return decodedData[key].includes(substring);
+    };
+
+    this.dataConditions.push(condition);
+    return this;
+  }
+
+  async findMany(): Promise<Attestation[]> {
+    // First filter the data based on the DB conditions.
+    // Then test the data conditions for each entry returned by the
+    // DB query.
+
+    // Find DB matches
+    const dbMatches = await this.prisma.attestation.findMany({
+      where: this.condition,
+    });
+
+    // Decode data for each entry and filter based on the data conditions
+    const dataMatches = dbMatches.filter((attestation) => {
+      const decodedData = this._decodeData(attestation.data);
+      return this.dataConditions.every((condition) => condition(decodedData));
+    });
+
+    // Return the entries that match the DB conditions
+    // AND the attestation-data conditions
+    return dataMatches;
+  }
+
+  async count(): Promise<number> {
+    const matchedAttestations = await this.findMany();
+    return matchedAttestations.length;
+  }
+
+  ////
+  // Prisma condition-building functions for queries executed at the DB.
+  //
 
   attesterIs(attester: string): this {
     this.condition.attester = attester;
@@ -84,7 +175,6 @@ export class AttestationQueryBuilder {
 
   beforeDate(date: Date): this {
     const timestamp = Math.floor(date.getTime() / 1000);
-    console.log(timestamp);
     this.condition.time = { lt: timestamp };
     return this;
   }
@@ -99,6 +189,7 @@ export class AttestationQueryBuilder {
   // Functions that run the queries and return the DB results without any
   // other processing. They can be used for introspection and to run more
   // complex queries on the returned data.
+  //
 
   async dbFindMany(): Promise<any[]> {
     this.condition.schemaId = this.schemaUid();
