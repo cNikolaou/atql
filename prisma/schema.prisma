@@ -1,0 +1,95 @@
+///
+// NOTE:
+// Copy of the file https://github.com/ethereum-attestation-service/eas-indexing-service/blob/b6248d1e35098547b9dae252be6bc5492dfb14f7/prisma/schema.prisma
+//
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// NOTE: The GraphQL client is not active (for now)
+// generator typegraphql {
+//   provider = "typegraphql-prisma"
+// }
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Schema {
+  id           String        @id
+  schema       String
+  creator      String
+  resolver     String
+  revocable    Boolean
+  index        String
+  txid         String
+  time         Int
+  attestations Attestation[]
+  schemaNames  SchemaName[]
+}
+
+model Attestation {
+  id              String  @id
+  data            String
+  decodedDataJson String  @default("")
+  schema          Schema  @relation(fields: [schemaId], references: [id])
+  recipient       String
+  attester        String
+  time            Int
+  timeCreated     Int
+  expirationTime  Int
+  revocationTime  Int
+  refUID          String
+  revocable       Boolean
+  revoked         Boolean
+  txid            String
+  schemaId        String
+  ipfsHash        String
+  isOffchain      Boolean
+  // recipientEnsName EnsName? @relation(fields: [recipient], references: [id], name: "recipientEnsName")
+  // attesterEnsName  EnsName? @relation(fields: [attester], references: [id], name: "attesterEnsName")
+}
+
+model SchemaName {
+  id              String  @id @default(cuid())
+  schemaId        String
+  schema          Schema  @relation(fields: [schemaId], references: [id])
+  attesterAddress String
+  name            String
+  time            Int
+  isCreator       Boolean
+}
+
+model Timestamp {
+  id        String @id
+  from      String
+  txid      String
+  tree      String @default("")
+  timestamp Int
+}
+
+model OffchainRevocation {
+  id        String @id @default(cuid())
+  from      String
+  uid       String
+  txid      String
+  timestamp Int
+}
+
+model EnsName {
+  id        String @id
+  name      String
+  timestamp Int
+  // sentAttestations     Attestation[] @relation("attesterEnsName")
+  // receivedAttestations Attestation[] @relation("recipientEnsName")
+}
+
+model ServiceStat {
+  name  String @id
+  value String
+}
