@@ -1,15 +1,17 @@
 import { Attestation, PrismaClient, Schema } from '@prisma/client';
+import { ethers } from 'ethers';
 
 export class AttestationQueryBuilder {
   private condition: any = {};
   private prisma: PrismaClient;
   private schema: Schema;
   private schemaAbiTypes: string[];
+  private schemaAbiNames: string[];
 
   constructor(schema: Schema, prismaClient: PrismaClient, includeRevoked?: boolean) {
     this.prisma = prismaClient;
     this.schema = schema;
-    this._getSchemaAbiTypes();
+    this._getSchemaAbi();
 
     if (!includeRevoked) {
       this.condition.revoked = false;
@@ -28,9 +30,26 @@ export class AttestationQueryBuilder {
     return new AttestationQueryBuilder(schema, prismaClient, includeRevoked);
   }
 
-  _getSchemaAbiTypes() {
+  _getSchemaAbi() {
     const abiParts = this.schema.schema.split(',');
     this.schemaAbiTypes = abiParts.map((part) => part.split(' ')[0]);
+    this.schemaAbiNames = abiParts.map((part) => part.split(' ')[1]);
+  }
+
+  _decodeData(data) {
+    // Decode attestation data based on the ABI types and the ABI names.
+    // Return an object with key-value pairs:
+    // - key is the field name
+    // - value is the decoded value of the field
+
+    const decodedValues = ethers.utils.defaultAbiCoder.decode(this.schemaAbiTypes, data);
+
+    let decodedData = {};
+    for (let i = 0; i < decodedValues.length; i++) {
+      decodedData[this.schemaAbiNames[i]] = decodedValues[i];
+    }
+
+    return decodedData;
   }
 
   ////
