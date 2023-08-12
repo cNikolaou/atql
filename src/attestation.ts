@@ -4,10 +4,12 @@ export class AttestationQueryBuilder {
   private condition: any = {};
   private prisma: PrismaClient;
   private schema: Schema;
+  private schemaAbiTypes: string[];
 
   constructor(schema: Schema, prismaClient: PrismaClient, includeRevoked?: boolean) {
     this.prisma = prismaClient;
     this.schema = schema;
+    this._getSchemaAbiTypes();
 
     if (!includeRevoked) {
       this.condition.revoked = false;
@@ -26,7 +28,12 @@ export class AttestationQueryBuilder {
     return new AttestationQueryBuilder(schema, prismaClient, includeRevoked);
   }
 
-  ///
+  _getSchemaAbiTypes() {
+    const abiParts = this.schema.schema.split(',');
+    this.schemaAbiTypes = abiParts.map((part) => part.split(' ')[0]);
+  }
+
+  ////
   // Schema-related functions to return relevant data. These Schema data
   // doesn't change so returning data from the in-memory `this.schema`
   // object is fine.
@@ -39,7 +46,11 @@ export class AttestationQueryBuilder {
     return this.schema.id;
   }
 
-  ///
+  getSchemaAbiTypes() {
+    return this.schemaAbiTypes;
+  }
+
+  ////
   // Condition-building functions
 
   attesterIs(attester: string): this {
@@ -65,7 +76,7 @@ export class AttestationQueryBuilder {
     return this;
   }
 
-  ///
+  ////
   // Functions that run the queries and return the DB results without any
   // other processing. They can be used for introspection and to run more
   // complex queries on the returned data.
