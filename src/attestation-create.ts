@@ -74,3 +74,24 @@ export class Attestor {
     }
   }
 }
+
+export async function schemaBuilder(schema: string, resolverAddress?: string, revocable?: boolean) {
+  // Streamlined the deployment of a schema based on the provided `schema` string.
+
+  const tx = await schemaRegistry.register({
+    schema,
+    resolverAddress: resolverAddress || SCHEMA_REGISTRY_CONTRACT_ADDRESS,
+    revocable: revocable || true,
+  });
+
+  const schemaUid = await tx.wait();
+
+  return schemaUid;
+}
+
+export async function createSampleRoleBasedSchema() {
+  // Create a simple schema that can be used for role-based access control
+
+  const schema = 'string role';
+  return await schemaBuilder(schema);
+}
