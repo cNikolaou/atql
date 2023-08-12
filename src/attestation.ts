@@ -12,6 +12,7 @@ export class AttestationQueryBuilder {
   constructor(schema: Schema, prismaClient: PrismaClient, includeRevoked?: boolean) {
     this.prisma = prismaClient;
     this.schema = schema;
+    this.condition.schemaId = this.schemaUid();
     this._getSchemaAbi();
 
     if (!includeRevoked) {
@@ -192,28 +193,24 @@ export class AttestationQueryBuilder {
   //
 
   async dbFindMany(): Promise<any[]> {
-    this.condition.schemaId = this.schemaUid();
     return await this.prisma.attestation.findMany({
       where: this.condition,
     });
   }
 
   async dbFindFirst(): Promise<Attestation | null> {
-    this.condition.schemaId = this.schemaUid();
     return await this.prisma.attestation.findFirst({
       where: this.condition,
     });
   }
 
   async dbFindUnique(): Promise<Attestation | null> {
-    this.condition.schemaId = this.schemaUid();
     return await this.prisma.attestation.findUnique({
       where: this.condition,
     });
   }
 
   async dbCount(): Promise<number> {
-    this.condition.schemaId = this.schemaUid();
     return await this.prisma.attestation.count({
       where: this.condition,
     });
