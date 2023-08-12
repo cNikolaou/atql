@@ -4,3 +4,5 @@ node_modules/
 # directory with the compiled TypeScript of the project
 dist/
 
+# don't track file with environment secrets
+.env
