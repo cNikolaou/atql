@@ -11,13 +11,13 @@ export async function isSuperuser(recipient: string) {
   const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
 
   try {
-    const dbOnlyCondition = await schema
-      .attesterIs(attester)
-      .recipientIs(recipient)
-      .dataKeyWithValue('role', 'superuser')
+    const matches = await schema
+      .attesterIs(attester)                     // attester that we trust
+      .recipientIs(recipient)                   // recipient we want to check
+      .dataKeyWithValue('role', 'superuser')    // role that we are interested in
       .count();
 
-    return dbOnlyCondition > 0;
+    return matches > 0;
   } catch (error) {
     console.error(error);
     return false;
@@ -28,13 +28,13 @@ export async function isAdmin(recipient: string) {
   const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
 
   try {
-    const dbOnlyCondition = await schema
+    const matches = await schema
       .attesterIs(attester)
       .recipientIs(recipient)
       .dataKeyWithValue('role', 'admin')
       .count();
 
-    return dbOnlyCondition > 0;
+    return matches > 0;
   } catch (error) {
     console.error(error);
     return false;
