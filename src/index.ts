@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { AttestationQueryBuilder } from './attestation';
+import { AttestationQueryBuilder } from './attestation-query';
 import { Attestor, createSampleRoleBasedSchema } from './attestation-create';
 
 const prisma = new PrismaClient();

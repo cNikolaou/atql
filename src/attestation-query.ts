@@ -15,7 +15,7 @@ import { AbiCoder } from 'ethers';
 //
 export class AttestationQueryBuilder {
   private condition: any = {};
-  private dataConditions: Array<Function> = [];
+  private dataConditionGroups: Array<Array<Function>> = [[]];
   private prisma: PrismaClient;
   private schema: Schema;
   private schemaAbiTypes: string[];
@@ -67,6 +67,21 @@ export class AttestationQueryBuilder {
   }
 
   ////
+  // Logical conditions
+  //
+
+  or(): this {
+    this.dataConditionGroups.push([]);
+    return this;
+  }
+
+  // all conditions between the ORs are practically AND so
+  // no need to do anything additional here
+  and(): this {
+    return this;
+  }
+
+  ////
   // Schema-related functions to return relevant data. These Schema data
   // doesn't change so returning data from the in-memory `this.schema`
   // object is fine.
@@ -97,7 +112,7 @@ export class AttestationQueryBuilder {
       return decodedData[key] === value;
     };
 
-    this.dataConditions.push(condition);
+    this.dataConditionGroups[this.dataConditionGroups.length - 1].push(condition);
     return this;
   }
 
@@ -113,7 +128,7 @@ export class AttestationQueryBuilder {
       return decodedData[key] < value;
     };
 
-    this.dataConditions.push(condition);
+    this.dataConditionGroups[this.dataConditionGroups.length - 1].push(condition);
     return this;
   }
 
@@ -129,7 +144,7 @@ export class AttestationQueryBuilder {
       return decodedData[key] > value;
     };
 
-    this.dataConditions.push(condition);
+    this.dataConditionGroups[this.dataConditionGroups.length - 1].push(condition);
     return this;
   }
 
@@ -144,7 +159,7 @@ export class AttestationQueryBuilder {
       return decodedData[key].includes(substring);
     };
 
-    this.dataConditions.push(condition);
+    this.dataConditionGroups[this.dataConditionGroups.length - 1].push(condition);
     return this;
   }
 
@@ -161,7 +176,9 @@ export class AttestationQueryBuilder {
     // Decode data for each entry and filter based on the data conditions
     const dataMatches = dbMatches.filter((attestation) => {
       const decodedData = this._decodeData(attestation.data);
-      return this.dataConditions.every((condition) => condition(decodedData));
+      return this.dataConditionGroups.some((group) =>
+        group.every((condition) => condition(decodedData)),
+      );
     });
 
     // Return the entries that match the DB conditions

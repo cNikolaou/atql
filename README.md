@@ -33,10 +33,19 @@ const attester = '';
 
 const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
 
-const matches = await schema
+const isSuperuser = await schema
     .attesterIs(attester)                     // attester that we trust
     .recipientIs(recipient)                   // recipient we want to check
     .dataKeyWithValue('role', 'superuser')    // role that we are interested in
+    .count();
+
+// Also OR and AND logical operators
+const isSuperuserOrAdmin = await schema
+    .attesterIs(attester)
+    .recipientIs(recipient)
+    .dataKeyWithValue('role', 'admin')
+    .or()
+    .dataKeyWithValue('role', 'superuser')
     .count();
 ```
 

@@ -73,3 +73,41 @@ test('Data-condition with uint equality', async () => {
 
   expect(dbAndDataCondition).toBe(5);
 });
+
+test('Test logical condition OR', async () => {
+  const schemaUid = '0x2154bad5fb5faf4e115afd58f23afdf112225816e0c58b682071470a5de9aafb';
+  const attester = '0x5DA3C2c0250D311B2763bdf3cfa49C0f4a219987';
+  const recipient = '0x5DA3C2c0250D311B2763bdf3cfa49C0f4a219987';
+
+  const prisma = new PrismaClient();
+  const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
+
+  const isSuperuserOrTestuser = await schema
+    .attesterIs(attester)
+    .recipientIs(recipient)
+    .dataKeyWithValue('role', 'testuser')
+    .or()
+    .dataKeyWithValue('role', 'superuser')
+    .count();
+
+  expect(isSuperuserOrTestuser).toBe(1);
+});
+
+test('Test logical condition AND', async () => {
+  const schemaUid = '0x2154bad5fb5faf4e115afd58f23afdf112225816e0c58b682071470a5de9aafb';
+  const attester = '0x5DA3C2c0250D311B2763bdf3cfa49C0f4a219987';
+  const recipient = '0x5DA3C2c0250D311B2763bdf3cfa49C0f4a219987';
+
+  const prisma = new PrismaClient();
+  const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
+
+  const isSuperuserOrTestuser = await schema
+    .attesterIs(attester)
+    .recipientIs(recipient)
+    .dataKeyWithValue('role', 'testuser')
+    .and()
+    .dataKeyWithValue('role', 'superuser')
+    .count();
+
+  expect(isSuperuserOrTestuser).toBe(0);
+});
