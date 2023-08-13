@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import ProfileConnect from '../components/ProfileConnect';
+import GatedContent from '../components/GatedContent';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,6 +17,7 @@ export default function Home() {
         <h1>Connect to Access Content</h1>
 
         <div className="main-with-buttons">
+          <GatedContent />
           <ProfileConnect />
         </div>
       </div>
