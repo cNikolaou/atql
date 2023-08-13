@@ -87,3 +87,11 @@ label {
 .red-box {
   @apply bg-red-200;
 }
+
+.admin-box {
+  @apply border-2 border-black p-6 m-10 w-56 h-56;
+}
+
+.admin-box-hidden {
+  @apply border-2 border-black p-6 m-10 w-56 h-56 hidden;
+}

@@ -41,8 +41,19 @@ export default function GatedContent() {
     return () => clearInterval(intervalId);
   }, []);
 
+  function createPoll() {
+    alert('Create Poll');
+  }
+
   return (
     <>
+      <button
+        disabled={!isAdmin}
+        className={isAdmin ? 'btn-yellow' : 'btn-yellow-disabled'}
+        onClick={createPoll}
+      >
+        Admin Create Poll
+      </button>
       <div className="border-2 border-black p-6">
         <div className={address ? (isSuperuser ? 'green-box' : 'red-box') : ''}>
           <h2>
@@ -50,7 +61,6 @@ export default function GatedContent() {
           </h2>
         </div>
       </div>
-      <button className={isAdmin ? 'btn-yellow' : 'btn-yellow-disabled'}>Admin Content</button>
     </>
   );
 }
