@@ -9,7 +9,6 @@ test('DB-condition attestations before 23-8-12 should be 4', async () => {
   const prisma = new PrismaClient();
   const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
 
-  console.log(new Date(2023, 7, 11, 23, 59, 59));
   const dbOnlyCondition = await schema
     .attesterIs(attester)
     .recipientIs(recipient)

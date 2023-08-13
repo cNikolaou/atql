@@ -54,12 +54,7 @@ export class Attestor {
     const schemaEncoder = new SchemaEncoder(this.schema);
 
     try {
-      console.log('Attesting');
       const encodedData = schemaEncoder.encodeData(data);
-      console.log(data);
-      console.log(this.schema);
-      console.log(this.schemaRecord.uid);
-      console.log(encodedData);
 
       const tx = await eas.attest({
         schema: this.schemaRecord.uid,
@@ -78,6 +73,23 @@ export class Attestor {
       console.log(`Error ${error}`);
       console.log(`Follow schema: [${this.schema}]`);
     }
+  }
+}
+
+export async function attestationRevoke(attestationUid: string, schemaUid: string) {
+  try {
+    const tx = await eas.revoke({
+      schema: schemaUid,
+      data: {
+        uid: attestationUid,
+      },
+    });
+
+    const result = await tx.wait();
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
   }
 }
 
