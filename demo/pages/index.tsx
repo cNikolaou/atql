@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Inter } from 'next/font/google';
 import ProfileConnect from '../components/ProfileConnect';
 
@@ -6,11 +5,20 @@ const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      Main
-      <ProfileConnect />
-    </main>
+    <div className="flex h-screen space-x-4">
+      <div className="screen-part">
+        <h1>Create Schema</h1>
+      </div>
+      <div className="screen-part">
+        <h1>Make Attestation</h1>
+      </div>
+      <div className="screen-part">
+        <h1>Connect to Access Content</h1>
+
+        <div className="main-with-buttons">
+          <ProfileConnect />
+        </div>
+      </div>
+    </div>
   );
 }

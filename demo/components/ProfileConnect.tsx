@@ -11,10 +11,11 @@ export default function ProfileConnect() {
   if (isConnected)
     return (
       <div>
-        <div>Connected to {address}</div>
         <button className="btn-blue" onClick={() => disconnect()}>
           Disconnect
         </button>
+        <div className="text-placeholder h-[expectedHeight]"></div>
+        <div>{address}</div>
       </div>
     );
   return (
