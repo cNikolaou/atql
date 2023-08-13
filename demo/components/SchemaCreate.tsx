@@ -14,8 +14,6 @@ export default function SchemaCreate() {
         schema: schema,
       };
 
-      console.log(reqData);
-
       const res = await fetch('/api/schema-create', {
         method: 'POST',
         headers: {

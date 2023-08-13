@@ -34,10 +34,10 @@ export default function GatedContent() {
     fetchUserPrivileges();
 
     // Set up polling every few seconds (e.g., 5 seconds)
-    const intervalId = setInterval(fetchUserPrivileges, 5000);
+    // const intervalId = setInterval(fetchUserPrivileges, 5000);
 
     // Cleanup on component unmount
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
   }, []);
 
   return (

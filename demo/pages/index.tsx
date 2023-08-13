@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 import ProfileConnect from '../components/ProfileConnect';
 import GatedContent from '../components/GatedContent';
 import SchemaCreate from '../components/SchemaCreate';
+import AttestationCreate from '../components/AttestationCreate';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,6 +17,9 @@ export default function Home() {
       </div>
       <div className="screen-part">
         <h1>Make Attestation</h1>
+        <div className="main-items">
+          <AttestationCreate />
+        </div>
       </div>
       <div className="screen-part">
         <h1>Connect to Access Content</h1>
