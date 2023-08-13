@@ -23,7 +23,7 @@ interested to find out if there
 
 
 ```ts
-import { AttestationQueryBuilder } from './attestation';
+import { AttestationQueryBuilder } from './attestation-query';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

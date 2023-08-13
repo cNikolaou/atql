@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { AttestationQueryBuilder } from '../../dist/attestation';
+import { AttestationQueryBuilder } from '../../dist/attestation-query';
 import { Attestor, attestationRevoke, schemaBuilder } from '../../dist/attestation-create';
 
 const schemaUid = '0x2154bad5fb5faf4e115afd58f23afdf112225816e0c58b682071470a5de9aafb';
@@ -12,9 +12,9 @@ export async function isSuperuser(recipient: string) {
 
   try {
     const matches = await schema
-      .attesterIs(attester)                     // attester that we trust
-      .recipientIs(recipient)                   // recipient we want to check
-      .dataKeyWithValue('role', 'superuser')    // role that we are interested in
+      .attesterIs(attester) // attester that we trust
+      .recipientIs(recipient) // recipient we want to check
+      .dataKeyWithValue('role', 'superuser') // role that we are interested in
       .count();
 
     return matches > 0;

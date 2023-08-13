@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { AttestationQueryBuilder } from './attestation';
+import { AttestationQueryBuilder } from './attestation-query';
 
 const attester = '0x5DA3C2c0250D311B2763bdf3cfa49C0f4a219987';
 const recipient = '0xFD50b031E778fAb33DfD2Fc3Ca66a1EeF0652165';
