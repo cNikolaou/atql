@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { AttestationQueryBuilder } from './attestation';
-import { Attestor } from './attestation-create';
+import { Attestor, createSampleRoleBasedSchema } from './attestation-create';
 
 const prisma = new PrismaClient();
 
@@ -9,17 +9,23 @@ async function main() {
   const attester = '';
   const recipient = '';
 
+  // Step 1: Create Schema
+  const suid = await createSampleRoleBasedSchema();
+  console.log(suid);
+
+  // Step 2: Create Attestation
+  const attestor = await Attestor.create(schemaUid);
+
+  const data = [{ name: 'role', value: 'admin', type: 'string' }];
+
+  const uid = await attestor.attest(recipient, data);
+  console.log(uid);
+
+  // Step 3: Query Attestations
   const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
   console.log(`Schema ID:\n${schema.schemaUid()}\nShould match:\n${schemaUid}`);
 
   console.log(schema.getSchemaAbi());
-
-  const attest = await Attestor.create(schemaUid);
-
-  const data = [{ name: 'test2', value: 123, type: 'uint16' }];
-
-  const uid = await attest.attest(recipient, data);
-  console.log(uid);
 }
 
 main()
