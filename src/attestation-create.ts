@@ -9,6 +9,7 @@ import { ethers } from 'ethers';
 
 const EAS_CONTRACT_ADDRESS = '0x4200000000000000000000000000000000000021';
 const SCHEMA_REGISTRY_CONTRACT_ADDRESS = '0x4200000000000000000000000000000000000020';
+const RESOLVER_CONTRACT = '0x0000000000000000000000000000000000000000';
 
 const eas = new EAS(EAS_CONTRACT_ADDRESS);
 const schemaRegistry = new SchemaRegistry(SCHEMA_REGISTRY_CONTRACT_ADDRESS);
@@ -53,7 +54,12 @@ export class Attestor {
     const schemaEncoder = new SchemaEncoder(this.schema);
 
     try {
+      console.log('Attesting');
       const encodedData = schemaEncoder.encodeData(data);
+      console.log(data);
+      console.log(this.schema);
+      console.log(this.schemaRecord.uid);
+      console.log(encodedData);
 
       const tx = await eas.attest({
         schema: this.schemaRecord.uid,
@@ -80,7 +86,7 @@ export async function schemaBuilder(schema: string, resolverAddress?: string, re
 
   const tx = await schemaRegistry.register({
     schema,
-    resolverAddress: resolverAddress || SCHEMA_REGISTRY_CONTRACT_ADDRESS,
+    resolverAddress: resolverAddress || RESOLVER_CONTRACT,
     revocable: revocable || true,
   });
 
