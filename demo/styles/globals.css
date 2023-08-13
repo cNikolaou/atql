@@ -79,3 +79,11 @@ label {
 .small-tx {
   @apply mt-5 text-xs text-gray-500 w-48 break-words;
 }
+
+.green-box {
+  @apply bg-green-200;
+}
+
+.red-box {
+  @apply bg-red-200;
+}

@@ -24,6 +24,23 @@ export async function isSuperuser(recipient: string) {
   }
 }
 
+export async function isAdmin(recipient: string) {
+  const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
+
+  try {
+    const dbOnlyCondition = await schema
+      .attesterIs(attester)
+      .recipientIs(recipient)
+      .dataKeyWithValue('role', 'admin')
+      .count();
+
+    return dbOnlyCondition > 0;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
 export async function createSchema(schema: string) {
   // TODO: need to do some schema validation here
 

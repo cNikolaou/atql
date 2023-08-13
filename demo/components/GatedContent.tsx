@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 export default function GatedContent() {
   const { address } = useAccount();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperuser, setIsSuperuser] = useState(false);
 
   useEffect(() => {
     const fetchUserPrivileges = async () => {
@@ -12,10 +13,8 @@ export default function GatedContent() {
           address: address,
         };
 
-        console.log('reqData');
         console.log(reqData);
 
-        console.log('SEND REQUEST');
         const res = await fetch('/api/roles', {
           method: 'POST',
           headers: {
@@ -26,6 +25,8 @@ export default function GatedContent() {
 
         const data = await res.json();
         console.log(data);
+        setIsSuperuser(data.isSuperuser);
+        setIsAdmin(data.isAdmin);
       } catch (error) {
         console.error('Failed to fetch status:', error);
       }
@@ -34,14 +35,21 @@ export default function GatedContent() {
     fetchUserPrivileges();
 
     // Set up polling every few seconds (e.g., 5 seconds)
-    // const intervalId = setInterval(fetchUserPrivileges, 5000);
+    const intervalId = setInterval(fetchUserPrivileges, 5000);
 
     // Cleanup on component unmount
-    // return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
     <>
+      <div className="border-2 border-black p-6">
+        <div className={address ? (isSuperuser ? 'green-box' : 'red-box') : ''}>
+          <h2>
+            Are you a superuser? {address ? (isSuperuser ? 'Yes' : 'No') : 'Connect to find out!'}
+          </h2>
+        </div>
+      </div>
       <button className={isAdmin ? 'btn-yellow' : 'btn-yellow-disabled'}>Admin Content</button>
     </>
   );
