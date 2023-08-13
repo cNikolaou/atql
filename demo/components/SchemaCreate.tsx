@@ -34,8 +34,10 @@ export default function SchemaCreate() {
 
   return (
     <>
+      <label htmlFor="schema">Schema Definition</label>
       <input
         type="text"
+        id="schema"
         value={schema}
         onChange={handleInputChange}
         placeholder="Enter schema..."

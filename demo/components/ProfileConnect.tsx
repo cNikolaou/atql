@@ -14,13 +14,17 @@ export default function ProfileConnect() {
         <button className="btn-blue" onClick={() => disconnect()}>
           Disconnect
         </button>
-        <div className="text-placeholder h-[expectedHeight]"></div>
-        <div>{address}</div>
+        <div className="small-tx">Account:</div>
+        <div className="mt-5 text-xs text-gray-500 w-48">{address}</div>
       </div>
     );
   return (
-    <button className="btn-blue" onClick={() => connect()}>
-      Connect Wallet
-    </button>
+    <>
+      <button className="btn-blue" onClick={() => connect()}>
+        Connect Wallet
+      </button>
+      <div className="small-tx">Account:</div>
+      <div className="small-tx">Not connected yet</div>
+    </>
   );
 }

@@ -68,5 +68,13 @@ h1 {
 }
 
 input {
-  @apply bg-gray-200 rounded p-2 w-full;
+  @apply bg-gray-300 rounded p-2 w-full m-2 border-2 border-black focus:border-blue-300 rounded;
+}
+
+label {
+  @apply text-sm font-bold;
+}
+
+.small-tx {
+  @apply mt-5 text-xs text-gray-500 w-48 break-words;
 }
