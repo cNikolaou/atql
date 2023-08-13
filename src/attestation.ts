@@ -1,6 +1,18 @@
 import { Attestation, PrismaClient, Schema } from '@prisma/client';
-import { ethers, AbiCoder } from 'ethers';
+import { AbiCoder } from 'ethers';
 
+////
+// Use the class to instantiate a query builder for a specific schema.
+// Chain conditions to create the query you want to run. There are two
+// types of conditions:
+//
+//  - db-level conditions for all the fields recorded by EAS for each
+//    attestation, such as "recipient", "attester", "time", "revoked"
+//
+//  - data-level conditions for the fields that are recorded as part of
+//    the "data" field stored for each EAS attestation (the conditions
+//    follow the naming pattern `data*` to be distinguishable)
+//
 export class AttestationQueryBuilder {
   private condition: any = {};
   private dataConditions: Array<Function> = [];

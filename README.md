@@ -23,8 +23,15 @@ interested to find out if there
 
 
 ```ts
+import { AttestationQueryBuilder } from './attestation';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
 const schemaUid = '0x2154bad5fb5faf4e115afd58f23afdf112225816e0c58b682071470a5de9aafb';
 const attester = '';
+
+const schema = await AttestationQueryBuilder.create(schemaUid, prisma);
 
 const matches = await schema
     .attesterIs(attester)                     // attester that we trust
