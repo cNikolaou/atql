@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { AttestationQueryBuilder } from '../../dist/attestation';
-import { Attestor, schemaBuilder } from '../../dist/attestation-create';
+import { Attestor, attestationRevoke, schemaBuilder } from '../../dist/attestation-create';
 
 const schemaUid = '0x2154bad5fb5faf4e115afd58f23afdf112225816e0c58b682071470a5de9aafb';
 const attester = '0x5DA3C2c0250D311B2763bdf3cfa49C0f4a219987';
@@ -31,9 +31,14 @@ export async function createSchema(schema: string) {
 }
 
 export async function createAttestation(schemaUid: string, recipient: string, role: string) {
-  // TODO: need to do some schema validation here
+  // TODO: need to do some data validation here
   const attestor = await Attestor.create(schemaUid);
   const data = [{ name: 'role', value: role, type: 'string' }];
 
   return await attestor.attest(recipient, data);
+}
+
+export async function revokeAttestation(attestationUid: string) {
+  // TODO: need to do some validation here whether the attestation exists
+  return await attestationRevoke(attestationUid, schemaUid);
 }

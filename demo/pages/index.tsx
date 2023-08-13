@@ -3,6 +3,7 @@ import ProfileConnect from '../components/ProfileConnect';
 import GatedContent from '../components/GatedContent';
 import SchemaCreate from '../components/SchemaCreate';
 import AttestationCreate from '../components/AttestationCreate';
+import AttestationRevoke from '../components/AttestationRevoke';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,7 +23,13 @@ export default function Home() {
         </div>
       </div>
       <div className="screen-part">
-        <h1>Connect to Access Content</h1>
+        <h1>Revoke Attestation</h1>
+        <div className="main-items">
+          <AttestationRevoke />
+        </div>
+      </div>
+      <div className="screen-part">
+        <h1>Access Content</h1>
 
         <div className="main-with-buttons">
           <GatedContent />

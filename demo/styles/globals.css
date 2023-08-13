@@ -56,7 +56,8 @@ h1 {
 }
 
 .screen-part {
-  @apply flex-1 p-4 m-4 border-2 border-black rounded flex flex-col;
+  /* @apply flex-1 p-4 m-4 border-2 border-black rounded flex flex-col; */
+  @apply w-1/4 bg-gray-200 border-2 border-gray-500 rounded-lg flex flex-col justify-center items-center;
 }
 
 .main-items {
